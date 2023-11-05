@@ -1,3 +1,8 @@
+from textwrap import wrap as _wrap
+
+WRAP_WIDTH = 70
+
+
 def roman(num: int) -> str:
     # I = 1
     # V = 5
@@ -39,3 +44,20 @@ def _to_digit_pair(num: int, ones: str, fives: str, tens: str) -> str:
         return ones + tens
 
     raise Exception("Unreachable")
+
+
+def prepend(to_prepend: str, lines: str) -> str:
+    return "\n".join([to_prepend + line for line in lines.split("\n")])
+
+
+def prepend_first_line(to_prepend: str, lines: str) -> str:
+    return to_prepend + "\n".join(
+        [
+            " " * len(to_prepend) * (i > 0) + line
+            for i, line in enumerate(lines.split("\n"))
+        ]
+    )
+
+
+def wrap(text: str) -> str:
+    return "\n".join(_wrap(text, WRAP_WIDTH))
