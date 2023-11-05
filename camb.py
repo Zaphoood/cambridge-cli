@@ -5,7 +5,7 @@ import sys
 from bs4 import BeautifulSoup, Tag
 from dataclasses import dataclass
 import logging
-from textwrap import wrap
+from textwrap import wrap as _wrap
 from util import roman
 
 BASE_URL = "https://dictionary.cambridge.org/dictionary/english/"
@@ -13,6 +13,11 @@ BASE_URL = "https://dictionary.cambridge.org/dictionary/english/"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0",
 }
+WRAP_WIDTH = 70
+
+
+def wrap(text: str) -> str:
+    return "\n".join(_wrap(text, WRAP_WIDTH))
 
 
 class WordNotFound(ValueError):
@@ -25,10 +30,8 @@ class WordDefinition:
     explanation: str
 
     def __str__(self) -> str:
-        out = ""
-        if self.guideword is not None:
-            out += f"{self.guideword}: "
-        out += self.explanation
+        out = "" if self.guideword is None else (self.guideword + ": ")
+        out += wrap(self.explanation)
 
         return out
 
@@ -61,14 +64,25 @@ class WordInfo:
             out += "\n" + prepend("\t", str(self.definitions[0]))
         elif len(self.definitions) > 1:
             for i, definition in enumerate(self.definitions):
-                numeral = roman(i + 1).lower().rjust(5)
-                out += "\n" + prepend("\t", numeral + "\t" + str(definition))
+                definition_with_numeral = prepend_first_line(
+                    roman(i + 1).lower().rjust(5) + " ", str(definition)
+                )
+                out += "\n" + prepend("\t", definition_with_numeral)
 
         return out
 
 
 def prepend(to_prepend: str, lines: str) -> str:
     return "\n".join([to_prepend + line for line in lines.split("\n")])
+
+
+def prepend_first_line(to_prepend: str, lines: str) -> str:
+    return to_prepend + "\n".join(
+        [
+            " " * len(to_prepend) * (i > 0) + line
+            for i, line in enumerate(lines.split("\n"))
+        ]
+    )
 
 
 def get_page_for_word(word: str) -> str:
