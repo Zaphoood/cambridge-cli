@@ -2,6 +2,8 @@
 
 ## Quick Start
 
+Python version >= 3.8 is required.
+
 ```sh
 python -m pip install -r requirements.txt
 ```
