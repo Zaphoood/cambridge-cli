@@ -76,7 +76,11 @@ def get_page_for_word(word: str) -> str:
     if response.status_code == 302 and response.headers.get("Location") == BASE_URL:
         raise WordNotFound(f"Could not find word '{word}'")
     if response.status_code != 200:
-        raise Exception(f"Could not get response")
+        print(f"ERROR: Could not get response")
+        if word != word.lower():
+            print(f"Trying '{word.lower()}' (lowercase)")
+            return get_page_for_word(word.lower())
+        sys.exit(1)
 
     return response.text
 
