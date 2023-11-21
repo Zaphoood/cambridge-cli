@@ -179,15 +179,17 @@ def main():
         print(f"ERROR: {e}")
         sys.exit(1)
 
-    word_infos = parse_info(page_src)
+    word_infos = list(parse_info(page_src))
 
-    if word_infos is None:
+    if word_infos is None or len(word_infos) == 0:
         print("Couldn't get info for word")
         sys.exit(1)
 
-    print()
-    for i, word_info in enumerate(word_infos):
-        print(f"{i + 1}. {word_info}\n")
+    if len(word_infos) == 1:
+        print(word_infos[0])
+    else:
+        for i, word_info in enumerate(word_infos):
+            print(f"{i + 1}. {word_info}\n")
 
 
 if __name__ == "__main__":
