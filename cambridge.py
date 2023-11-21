@@ -76,7 +76,11 @@ def get_page_for_word(word: str) -> str:
     if response.status_code == 302 and response.headers.get("Location") == BASE_URL:
         raise WordNotFound(f"Could not find word '{word}'")
     if response.status_code != 200:
-        raise Exception(f"Could not get response")
+        print(f"ERROR: Could not get response")
+        if word != word.lower():
+            print(f"Trying '{word.lower()}' (lowercase)")
+            return get_page_for_word(word.lower())
+        sys.exit(1)
 
     return response.text
 
@@ -175,17 +179,15 @@ def main():
         print(f"ERROR: {e}")
         sys.exit(1)
 
-    word_infos = list(parse_info(page_src))
+    word_infos = parse_info(page_src)
 
-    if word_infos is None or len(word_infos) == 0:
+    if word_infos is None:
         print("Couldn't get info for word")
         sys.exit(1)
 
-    if len(word_infos) == 1:
-        print(word_infos[0])
-    else:
-        for i, word_info in enumerate(word_infos):
-            print(f"{i + 1}. {word_info}\n")
+    print()
+    for i, word_info in enumerate(word_infos):
+        print(f"{i + 1}. {word_info}\n")
 
 
 if __name__ == "__main__":
