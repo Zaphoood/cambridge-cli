@@ -59,7 +59,7 @@ class WordInfo:
         elif len(self.definitions) > 1:
             for i, definition in enumerate(self.definitions):
                 definition_with_numeral = prepend_first_line(
-                    roman(i + 1).lower().rjust(5) + " ", str(definition)
+                    roman(i + 1).lower().rjust(5) + ") ", str(definition)
                 )
                 out += "\n" + prepend("\t", definition_with_numeral)
 
